@@ -133,23 +133,23 @@ public class UserController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size){
         try {
-            List<User> users = Userservice.searchUsers(keyword, page, size);
-            int total = Userservice.countSearchUsers(keyword);
-            
-            Map<String, Object> result = new HashMap<>();
-            result.put("users", users);
-            result.put("total", total);
-            result.put("page", page);
-            result.put("size", size);
-            
-            return Result.success(result);
-        } catch (Exception e) {
-            log.error("搜索用户失败", e);
-            return Result.error("搜索失败");
-        }
-    }
+     List<User> users = Userservice.searchUsers(keyword, page, size);
+     int total = Userservice.countSearchUsers(keyword);
 
-    /**
+     Map<String, Object> result = new HashMap<>();
+     result.put("users", users);
+     result.put("total", total);
+     result.put("page", page);
+     result.put("size", size);
+
+     return Result.success(result);
+     } catch (Exception e) {
+     log.error("搜索用户失败", e);
+     return Result.error("搜索失败");
+     }
+     }
+
+     /**
      * 获取用户公开信息
      * @param userId
      * @return

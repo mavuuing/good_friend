@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuliang.map.PostMap">
+
+    <select id="findFeedWithoutLimit" resultType="com.liuliang.pojo.Post">
+        SELECT * FROM post
+        <choose>
+            <when test="order == 'hot'">
+                ORDER BY likes DESC, created_at DESC
+            </when>
+            <otherwise>
+                ORDER BY created_at DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM post
+    </select>
+
+    <select id="findByUserIdWithoutLimit" resultType="com.liuliang.pojo.Post">
+        SELECT * FROM post
+        WHERE user_id = #{userId}
+        <choose>
+            <when test="order == 'hot'">
+                ORDER BY likes DESC, created_at DESC
+            </when>
+            <otherwise>
+                ORDER BY created_at DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(*) FROM post WHERE user_id = #{userId}
+    </select>
+
+    <select id="searchPostsWithoutLimit" resultType="com.liuliang.pojo.Post">
+        SELECT * FROM post
+        WHERE content LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="countSearchPosts" resultType="int">
+        SELECT COUNT(*) FROM post WHERE content LIKE CONCAT('%', #{keyword}, '%')
+    </select>
+
+</mapper>
+
+
