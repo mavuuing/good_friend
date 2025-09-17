@@ -30,14 +30,15 @@ CREATE TABLE `post` (
 
 -- 好友关系表
 CREATE TABLE `friend` (
-                          `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
-                          `user_id` BIGINT NOT NULL,
-                          `friend_id` BIGINT NOT NULL,
-                          `status` TINYINT DEFAULT 0, -- 0申请中 1已好友 2拒绝
-                          `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
-                          FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
-                          FOREIGN KEY (`friend_id`) REFERENCES `user`(`id`),
-                          UNIQUE KEY (`user_id`, `friend_id`)
+  `id` BIGINT PRIMARY KEY AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `friend_id` BIGINT NOT NULL,
+  `status` TINYINT DEFAULT 0,         -- 0申请中 1已好友 2拒绝
+  `message` VARCHAR(255),             -- 申请备注
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
+  FOREIGN KEY (`friend_id`) REFERENCES `user`(`id`),
+  UNIQUE KEY (`user_id`, `friend_id`)
 );
 
 -- 私信表

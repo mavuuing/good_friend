@@ -36,4 +36,18 @@ public class Result<T> implements Serializable {
         return result;
     }
 
+    public static Result<?> fail(int i, String msg) {
+        Result<?> result = new Result<>();
+        result.msg = msg;
+        result.code = i;
+        return result;
+    }
+
+    public static Result<?> success(Object messageId, String msg) {
+        Result<?> result = new Result<>();
+        result.msg = msg;
+//        获取消息id
+        result.code = (Integer) messageId;
+        return result;
+    }
 }

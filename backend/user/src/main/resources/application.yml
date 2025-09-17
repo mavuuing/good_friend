@@ -5,3 +5,7 @@ spring:
     username: root
     password: root
 
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  configuration:
+    mapUnderscoreToCamelCase: true

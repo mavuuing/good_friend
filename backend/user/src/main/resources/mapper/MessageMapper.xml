@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.liuliang.map.MessageMapper">
+
+    <!-- 插入消息 -->
+    <insert id="insert" parameterType="com.liuliang.pojo.Message" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO message (sender_id, receiver_id, content, is_read, created_at)
+        VALUES (#{senderId}, #{receiverId}, #{content}, #{isRead}, #{createdAt})
+    </insert>
+
+    <!-- 查询两人之间的消息（分页） -->
+    <select id="findMessagesBetweenUsers" resultType="com.liuliang.vo.MessageVO">
+        SELECT 
+            id,
+            sender_id AS fromUserId,
+            receiver_id AS toUserId,
+            content,
+            is_read AS isRead,
+            created_at AS createdAt
+        FROM message
+        WHERE (sender_id = #{userId1} AND receiver_id = #{userId2})
+           OR (sender_id = #{userId2} AND receiver_id = #{userId1})
+        ORDER BY created_at DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <!-- 统计两人之间的消息总数 -->
+    <select id="countMessagesBetweenUsers" resultType="int">
+        SELECT COUNT(*) 
+        FROM message
+        WHERE (sender_id = #{userId1} AND receiver_id = #{userId2})
+           OR (sender_id = #{userId2} AND receiver_id = #{userId1})
+    </select>
+
+    <!-- 查询会话列表 -->
+    <select id="findConversationsByUserId" resultType="com.liuliang.vo.ConversationVO">
+        SELECT 
+            u.id AS userId,
+            u.username,
+            u.avatar,
+            m.content AS lastMsg,
+            m.created_at AS lastTime,
+            (SELECT COUNT(*) FROM message WHERE receiver_id = #{userId} AND sender_id = u.id AND is_read = FALSE) AS unread
+        FROM (
+            SELECT DISTINCT 
+                CASE WHEN sender_id = #{userId} THEN receiver_id ELSE sender_id END AS contact_id,
+                MAX(created_at) AS latest_time
+            FROM message
+            WHERE sender_id = #{userId} OR receiver_id = #{userId}
+            GROUP BY contact_id
+        ) AS contacts
+        JOIN message m ON (
+            (m.sender_id = #{userId} AND m.receiver_id = contacts.contact_id) OR
+            (m.sender_id = contacts.contact_id AND m.receiver_id = #{userId})
+        ) AND m.created_at = contacts.latest_time
+        JOIN user u ON u.id = contacts.contact_id
+        ORDER BY m.created_at DESC
+    </select>
+
+    <!-- 标记为已读 -->
+    <update id="markAsRead">
+        UPDATE message
+        SET is_read = TRUE
+        WHERE receiver_id = #{userId} AND sender_id = #{otherUserId} AND is_read = FALSE
+    </update>
+
+    <!-- 查询未读消息数 -->
+    <select id="countUnreadMessages" resultType="int">
+        SELECT COUNT(*) FROM message
+        WHERE receiver_id = #{userId} AND is_read = FALSE
+    </select>
+</mapper>
