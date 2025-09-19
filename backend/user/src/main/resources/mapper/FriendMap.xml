@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.liuliang.map.FriendMap">
+
+    <select id="findFriendsByUserId" resultType="com.liuliang.pojo.Friend">
+        SELECT * FROM friend
+        WHERE user_id = #{userId} AND status = 1
+        ORDER BY created_at DESC
+    </select>
+
+    <select id="findFriendRequestsByUserId" resultType="com.liuliang.pojo.Friend">
+        SELECT f.*
+        FROM friend f
+        WHERE f.friend_id = #{userId} AND f.status = 0
+        ORDER BY f.created_at DESC
+    </select>
+
+    <delete id="deleteFriendship">
+        DELETE FROM friend 
+        WHERE (user_id = #{userId} AND friend_id = #{friendId}) 
+        OR (user_id = #{friendId} AND friend_id = #{userId})
+    </delete>
+
+</mapper>
+
+
